@@ -4,409 +4,410 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/goamz/goamz/ec2"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/ec2"
 )
 
-var instances []ec2.Instance = []ec2.Instance{
-	ec2.Instance{
-		State: ec2.InstanceState{
-			Code: 16,
-			Name: "running",
+var instances []*ec2.Instance = []*ec2.Instance{
+	&ec2.Instance{
+		State: &ec2.InstanceState{
+			Code: aws.Int64(16),
+			Name: aws.String("running"),
 		},
-		Tags: []ec2.Tag{
-			ec2.Tag{
-				Key:   "Version",
-				Value: "0.6.16",
+		Tags: []*ec2.Tag{
+			&ec2.Tag{
+				Key:   aws.String("Version"),
+				Value: aws.String("0.6.16"),
 			},
-			ec2.Tag{
-				Key:   "Name",
-				Value: "next-production-0.6.16-work",
+			&ec2.Tag{
+				Key:   aws.String("Name"),
+				Value: aws.String("next-production-0.6.16-work"),
 			},
-			ec2.Tag{
-				Key:   "Deployment",
-				Value: "next-production",
+			&ec2.Tag{
+				Key:   aws.String("Deployment"),
+				Value: aws.String("next-production"),
 			},
-			ec2.Tag{
-				Key:   "Type",
-				Value: "work",
+			&ec2.Tag{
+				Key:   aws.String("Type"),
+				Value: aws.String("work"),
 			},
 		},
-		PrivateIpAddress: "172.22.2.183",
+		PrivateIpAddress: aws.String("172.22.2.183"),
 	},
-	ec2.Instance{
-		State: ec2.InstanceState{
-			Code: 48,
-			Name: "terminated",
+	&ec2.Instance{
+		State: &ec2.InstanceState{
+			Code: aws.Int64(48),
+			Name: aws.String("terminated"),
 		},
-		Tags: []ec2.Tag{
-			ec2.Tag{
-				Key:   "Name",
-				Value: "www-production-0.6.16-frontend",
+		Tags: []*ec2.Tag{
+			&ec2.Tag{
+				Key:   aws.String("Name"),
+				Value: aws.String("www-production-0.6.16-frontend"),
 			},
-			ec2.Tag{
-				Key:   "Version",
-				Value: "0.6.16",
+			&ec2.Tag{
+				Key:   aws.String("Version"),
+				Value: aws.String("0.6.16"),
 			},
-			ec2.Tag{
-				Key:   "Type",
-				Value: "frontend",
+			&ec2.Tag{
+				Key:   aws.String("Type"),
+				Value: aws.String("frontend"),
 			},
-			ec2.Tag{
-				Key:   "Deployment",
-				Value: "www-production",
+			&ec2.Tag{
+				Key:   aws.String("Deployment"),
+				Value: aws.String("www-production"),
 			},
 		},
-		PrivateIpAddress: "",
+		PrivateIpAddress: aws.String(""),
 	},
-	ec2.Instance{
-		State: ec2.InstanceState{
-			Code: 16,
-			Name: "running",
+	&ec2.Instance{
+		State: &ec2.InstanceState{
+			Code: aws.Int64(16),
+			Name: aws.String("running"),
 		},
-		Tags: []ec2.Tag{
-			ec2.Tag{
-				Key:   "Type",
-				Value: "frontend",
+		Tags: []*ec2.Tag{
+			&ec2.Tag{
+				Key:   aws.String("Type"),
+				Value: aws.String("frontend"),
 			},
-			ec2.Tag{
-				Key:   "Version",
-				Value: "0.6.16",
+			&ec2.Tag{
+				Key:   aws.String("Version"),
+				Value: aws.String("0.6.16"),
 			},
-			ec2.Tag{
-				Key:   "Name",
-				Value: "next-production-0.6.16-frontend",
+			&ec2.Tag{
+				Key:   aws.String("Name"),
+				Value: aws.String("next-production-0.6.16-frontend"),
 			},
-			ec2.Tag{
-				Key:   "Deployment",
-				Value: "next-production",
+			&ec2.Tag{
+				Key:   aws.String("Deployment"),
+				Value: aws.String("next-production"),
 			},
 		},
-		PrivateIpAddress: "172.22.2.57",
+		PrivateIpAddress: aws.String("172.22.2.57"),
 	},
-	ec2.Instance{
-		State: ec2.InstanceState{
-			Code: 16,
-			Name: "running",
+	&ec2.Instance{
+		State: &ec2.InstanceState{
+			Code: aws.Int64(16),
+			Name: aws.String("running"),
 		},
-		Tags: []ec2.Tag{
-			ec2.Tag{
-				Key:   "Deployment",
-				Value: "next-production",
+		Tags: []*ec2.Tag{
+			&ec2.Tag{
+				Key:   aws.String("Deployment"),
+				Value: aws.String("next-production"),
 			},
-			ec2.Tag{
-				Key:   "Type",
-				Value: "work",
+			&ec2.Tag{
+				Key:   aws.String("Type"),
+				Value: aws.String("work"),
 			},
-			ec2.Tag{
-				Key:   "Name",
-				Value: "next-production-0.6.16-work",
+			&ec2.Tag{
+				Key:   aws.String("Name"),
+				Value: aws.String("next-production-0.6.16-work"),
 			},
-			ec2.Tag{
-				Key:   "Version",
-				Value: "0.6.16",
+			&ec2.Tag{
+				Key:   aws.String("Version"),
+				Value: aws.String("0.6.16"),
 			},
 		},
-		PrivateIpAddress: "172.22.1.121",
+		PrivateIpAddress: aws.String("172.22.1.121"),
 	},
-	ec2.Instance{
-		State: ec2.InstanceState{
-			Code: 16,
-			Name: "running",
+	&ec2.Instance{
+		State: &ec2.InstanceState{
+			Code: aws.Int64(16),
+			Name: aws.String("running"),
 		},
-		Tags: []ec2.Tag{
-			ec2.Tag{
-				Key:   "Type",
-				Value: "frontend",
+		Tags: []*ec2.Tag{
+			&ec2.Tag{
+				Key:   aws.String("Type"),
+				Value: aws.String("frontend"),
 			},
-			ec2.Tag{
-				Key:   "Deployment",
-				Value: "www-production",
+			&ec2.Tag{
+				Key:   aws.String("Deployment"),
+				Value: aws.String("www-production"),
 			},
-			ec2.Tag{
-				Key:   "Name",
-				Value: "www-production-0.6.16-frontend",
+			&ec2.Tag{
+				Key:   aws.String("Name"),
+				Value: aws.String("www-production-0.6.16-frontend"),
 			},
-			ec2.Tag{
-				Key:   "Version",
-				Value: "0.6.16",
+			&ec2.Tag{
+				Key:   aws.String("Version"),
+				Value: aws.String("0.6.16"),
 			},
 		},
-		PrivateIpAddress: "172.22.1.149",
+		PrivateIpAddress: aws.String("172.22.1.149"),
 	},
-	ec2.Instance{
-		State: ec2.InstanceState{
-			Code: 16,
-			Name: "running",
+	&ec2.Instance{
+		State: &ec2.InstanceState{
+			Code: aws.Int64(16),
+			Name: aws.String("running"),
 		},
-		Tags: []ec2.Tag{
-			ec2.Tag{
-				Key:   "Type",
-				Value: "frontend",
+		Tags: []*ec2.Tag{
+			&ec2.Tag{
+				Key:   aws.String("Type"),
+				Value: aws.String("frontend"),
 			},
-			ec2.Tag{
-				Key:   "Version",
-				Value: "0.6.18",
+			&ec2.Tag{
+				Key:   aws.String("Version"),
+				Value: aws.String("0.6.18"),
 			},
-			ec2.Tag{
-				Key:   "Name",
-				Value: "www-production-0.6.18-frontend",
+			&ec2.Tag{
+				Key:   aws.String("Name"),
+				Value: aws.String("www-production-0.6.18-frontend"),
 			},
-			ec2.Tag{
-				Key:   "Deployment",
-				Value: "www-production",
+			&ec2.Tag{
+				Key:   aws.String("Deployment"),
+				Value: aws.String("www-production"),
 			},
 		},
-		PrivateIpAddress: "172.22.1.154",
+		PrivateIpAddress: aws.String("172.22.1.154"),
 	},
-	ec2.Instance{
-		State: ec2.InstanceState{
-			Code: 16,
-			Name: "running",
+	&ec2.Instance{
+		State: &ec2.InstanceState{
+			Code: aws.Int64(16),
+			Name: aws.String("running"),
 		},
-		Tags: []ec2.Tag{
-			ec2.Tag{
-				Key:   "Version",
-				Value: "0.6.16",
+		Tags: []*ec2.Tag{
+			&ec2.Tag{
+				Key:   aws.String("Version"),
+				Value: aws.String("0.6.16"),
 			},
-			ec2.Tag{
-				Key:   "Type",
-				Value: "frontend",
+			&ec2.Tag{
+				Key:   aws.String("Type"),
+				Value: aws.String("frontend"),
 			},
-			ec2.Tag{
-				Key:   "Deployment",
-				Value: "next-production",
+			&ec2.Tag{
+				Key:   aws.String("Deployment"),
+				Value: aws.String("next-production"),
 			},
-			ec2.Tag{
-				Key:   "Name",
-				Value: "next-production-0.6.16-frontend",
+			&ec2.Tag{
+				Key:   aws.String("Name"),
+				Value: aws.String("next-production-0.6.16-frontend"),
 			},
 		},
-		PrivateIpAddress: "172.22.1.89",
+		PrivateIpAddress: aws.String("172.22.1.89"),
 	},
-	ec2.Instance{
-		State: ec2.InstanceState{
-			Code: 16,
-			Name: "running",
+	&ec2.Instance{
+		State: &ec2.InstanceState{
+			Code: aws.Int64(16),
+			Name: aws.String("running"),
 		},
-		Tags: []ec2.Tag{
-			ec2.Tag{
-				Key:   "Type",
-				Value: "frontend",
+		Tags: []*ec2.Tag{
+			&ec2.Tag{
+				Key:   aws.String("Type"),
+				Value: aws.String("frontend"),
 			},
-			ec2.Tag{
-				Key:   "Version",
-				Value: "0.6.16",
+			&ec2.Tag{
+				Key:   aws.String("Version"),
+				Value: aws.String("0.6.16"),
 			},
-			ec2.Tag{
-				Key:   "Deployment",
-				Value: "www-production",
+			&ec2.Tag{
+				Key:   aws.String("Deployment"),
+				Value: aws.String("www-production"),
 			},
-			ec2.Tag{
-				Key:   "Name",
-				Value: "www-production-0.6.16-frontend",
+			&ec2.Tag{
+				Key:   aws.String("Name"),
+				Value: aws.String("www-production-0.6.16-frontend"),
 			},
 		},
-		PrivateIpAddress: "172.22.2.151",
+		PrivateIpAddress: aws.String("172.22.2.151"),
 	},
-	ec2.Instance{
-		State: ec2.InstanceState{
-			Code: 16,
-			Name: "running",
+	&ec2.Instance{
+		State: &ec2.InstanceState{
+			Code: aws.Int64(16),
+			Name: aws.String("running"),
 		},
-		Tags: []ec2.Tag{
-			ec2.Tag{
-				Key:   "Deployment",
-				Value: "www-production",
+		Tags: []*ec2.Tag{
+			&ec2.Tag{
+				Key:   aws.String("Deployment"),
+				Value: aws.String("www-production"),
 			},
-			ec2.Tag{
-				Key:   "Version",
-				Value: "0.6.16",
+			&ec2.Tag{
+				Key:   aws.String("Version"),
+				Value: aws.String("0.6.16"),
 			},
-			ec2.Tag{
-				Key:   "Name",
-				Value: "www-production-0.6.16-work",
+			&ec2.Tag{
+				Key:   aws.String("Name"),
+				Value: aws.String("www-production-0.6.16-work"),
 			},
-			ec2.Tag{
-				Key:   "Type",
-				Value: "work",
+			&ec2.Tag{
+				Key:   aws.String("Type"),
+				Value: aws.String("work"),
 			},
 		},
-		PrivateIpAddress: "172.22.2.245",
+		PrivateIpAddress: aws.String("172.22.2.245"),
 	},
-	ec2.Instance{
-		State: ec2.InstanceState{
-			Code: 16,
-			Name: "running",
+	&ec2.Instance{
+		State: &ec2.InstanceState{
+			Code: aws.Int64(16),
+			Name: aws.String("running"),
 		},
-		Tags: []ec2.Tag{
-			ec2.Tag{
-				Key:   "Deployment",
-				Value: "www-production",
+		Tags: []*ec2.Tag{
+			&ec2.Tag{
+				Key:   aws.String("Deployment"),
+				Value: aws.String("www-production"),
 			},
-			ec2.Tag{
-				Key:   "Name",
-				Value: "www-production-0.6.16-work",
+			&ec2.Tag{
+				Key:   aws.String("Name"),
+				Value: aws.String("www-production-0.6.16-work"),
 			},
-			ec2.Tag{
-				Key:   "Type",
-				Value: "work",
+			&ec2.Tag{
+				Key:   aws.String("Type"),
+				Value: aws.String("work"),
 			},
-			ec2.Tag{
-				Key:   "Version",
-				Value: "0.6.16",
+			&ec2.Tag{
+				Key:   aws.String("Version"),
+				Value: aws.String("0.6.16"),
 			},
 		},
-		PrivateIpAddress: "172.22.2.246",
+		PrivateIpAddress: aws.String("172.22.2.246"),
 	},
-	ec2.Instance{
-		State: ec2.InstanceState{
-			Code: 16,
-			Name: "running",
+	&ec2.Instance{
+		State: &ec2.InstanceState{
+			Code: aws.Int64(16),
+			Name: aws.String("running"),
 		},
-		Tags: []ec2.Tag{
-			ec2.Tag{
-				Key:   "Name",
-				Value: "www-production-0.6.16-work",
+		Tags: []*ec2.Tag{
+			&ec2.Tag{
+				Key:   aws.String("Name"),
+				Value: aws.String("www-production-0.6.16-work"),
 			},
-			ec2.Tag{
-				Key:   "Deployment",
-				Value: "www-production",
+			&ec2.Tag{
+				Key:   aws.String("Deployment"),
+				Value: aws.String("www-production"),
 			},
-			ec2.Tag{
-				Key:   "Version",
-				Value: "0.6.16",
+			&ec2.Tag{
+				Key:   aws.String("Version"),
+				Value: aws.String("0.6.16"),
 			},
-			ec2.Tag{
-				Key:   "Type",
-				Value: "work",
+			&ec2.Tag{
+				Key:   aws.String("Type"),
+				Value: aws.String("work"),
 			},
 		},
-		PrivateIpAddress: "172.22.2.247",
+		PrivateIpAddress: aws.String("172.22.2.247"),
 	},
-	ec2.Instance{
-		State: ec2.InstanceState{
-			Code: 16,
-			Name: "running",
+	&ec2.Instance{
+		State: &ec2.InstanceState{
+			Code: aws.Int64(16),
+			Name: aws.String("running"),
 		},
-		Tags: []ec2.Tag{
-			ec2.Tag{
-				Key:   "Deployment",
-				Value: "www-production",
+		Tags: []*ec2.Tag{
+			&ec2.Tag{
+				Key:   aws.String("Deployment"),
+				Value: aws.String("www-production"),
 			},
-			ec2.Tag{
-				Key:   "Type",
-				Value: "work",
+			&ec2.Tag{
+				Key:   aws.String("Type"),
+				Value: aws.String("work"),
 			},
-			ec2.Tag{
-				Key:   "Name",
-				Value: "www-production-0.6.16-work",
+			&ec2.Tag{
+				Key:   aws.String("Name"),
+				Value: aws.String("www-production-0.6.16-work"),
 			},
-			ec2.Tag{
-				Key:   "Version",
-				Value: "0.6.16",
+			&ec2.Tag{
+				Key:   aws.String("Version"),
+				Value: aws.String("0.6.16"),
 			},
 		},
-		PrivateIpAddress: "172.22.2.248",
+		PrivateIpAddress: aws.String("172.22.2.248"),
 	},
-	ec2.Instance{
-		State: ec2.InstanceState{
-			Code: 16,
-			Name: "running",
+	&ec2.Instance{
+		State: &ec2.InstanceState{
+			Code: aws.Int64(16),
+			Name: aws.String("running"),
 		},
-		Tags: []ec2.Tag{
-			ec2.Tag{
-				Key:   "Version",
-				Value: "0.6.16",
+		Tags: []*ec2.Tag{
+			&ec2.Tag{
+				Key:   aws.String("Version"),
+				Value: aws.String("0.6.16"),
 			},
-			ec2.Tag{
-				Key:   "Name",
-				Value: "www-production-0.6.16-work",
+			&ec2.Tag{
+				Key:   aws.String("Name"),
+				Value: aws.String("www-production-0.6.16-work"),
 			},
-			ec2.Tag{
-				Key:   "Deployment",
-				Value: "www-production",
+			&ec2.Tag{
+				Key:   aws.String("Deployment"),
+				Value: aws.String("www-production"),
 			},
-			ec2.Tag{
-				Key:   "Type",
-				Value: "work",
+			&ec2.Tag{
+				Key:   aws.String("Type"),
+				Value: aws.String("work"),
 			},
 		},
-		PrivateIpAddress: "172.22.2.249",
+		PrivateIpAddress: aws.String("172.22.2.249"),
 	},
-	ec2.Instance{
-		State: ec2.InstanceState{
-			Code: 16,
-			Name: "running",
+	&ec2.Instance{
+		State: &ec2.InstanceState{
+			Code: aws.Int64(16),
+			Name: aws.String("running"),
 		},
-		Tags: []ec2.Tag{
-			ec2.Tag{
-				Key:   "Version",
-				Value: "0.6.16",
+		Tags: []*ec2.Tag{
+			&ec2.Tag{
+				Key:   aws.String("Version"),
+				Value: aws.String("0.6.16"),
 			},
-			ec2.Tag{
-				Key:   "Name",
-				Value: "www-production-0.6.16-work",
+			&ec2.Tag{
+				Key:   aws.String("Name"),
+				Value: aws.String("www-production-0.6.16-work"),
 			},
-			ec2.Tag{
-				Key:   "Type",
-				Value: "work",
+			&ec2.Tag{
+				Key:   aws.String("Type"),
+				Value: aws.String("work"),
 			},
-			ec2.Tag{
-				Key:   "Deployment",
-				Value: "www-production",
+			&ec2.Tag{
+				Key:   aws.String("Deployment"),
+				Value: aws.String("www-production"),
 			},
 		},
-		PrivateIpAddress: "172.22.1.64",
+		PrivateIpAddress: aws.String("172.22.1.64"),
 	},
-	ec2.Instance{
-		State: ec2.InstanceState{
-			Code: 16,
-			Name: "running",
+	&ec2.Instance{
+		State: &ec2.InstanceState{
+			Code: aws.Int64(16),
+			Name: aws.String("running"),
 		},
-		Tags: []ec2.Tag{
-			ec2.Tag{
-				Key:   "Deployment",
-				Value: "www-production",
+		Tags: []*ec2.Tag{
+			&ec2.Tag{
+				Key:   aws.String("Deployment"),
+				Value: aws.String("www-production"),
 			},
-			ec2.Tag{
-				Key:   "Version",
-				Value: "0.6.16",
+			&ec2.Tag{
+				Key:   aws.String("Version"),
+				Value: aws.String("0.6.16"),
 			},
-			ec2.Tag{
-				Key:   "Type",
-				Value: "work",
+			&ec2.Tag{
+				Key:   aws.String("Type"),
+				Value: aws.String("work"),
 			},
-			ec2.Tag{
-				Key:   "Name",
-				Value: "www-production-0.6.16-work",
+			&ec2.Tag{
+				Key:   aws.String("Name"),
+				Value: aws.String("www-production-0.6.16-work"),
 			},
 		},
-		PrivateIpAddress: "172.22.1.62",
+		PrivateIpAddress: aws.String("172.22.1.62"),
 	},
-	ec2.Instance{
-		State: ec2.InstanceState{
-			Code: 16,
-			Name: "running",
+	&ec2.Instance{
+		State: &ec2.InstanceState{
+			Code: aws.Int64(16),
+			Name: aws.String("running"),
 		},
-		Tags: []ec2.Tag{
-			ec2.Tag{
-				Key:   "Name",
-				Value: "www-production-0.6.18-frontend",
+		Tags: []*ec2.Tag{
+			&ec2.Tag{
+				Key:   aws.String("Name"),
+				Value: aws.String("www-production-0.6.18-frontend"),
 			},
-			ec2.Tag{
-				Key:   "Type",
-				Value: "frontend",
+			&ec2.Tag{
+				Key:   aws.String("Type"),
+				Value: aws.String("frontend"),
 			},
-			ec2.Tag{
-				Key:   "Version",
-				Value: "0.6.18",
+			&ec2.Tag{
+				Key:   aws.String("Version"),
+				Value: aws.String("0.6.18"),
 			},
-			ec2.Tag{
-				Key:   "Deployment",
-				Value: "www-production",
+			&ec2.Tag{
+				Key:   aws.String("Deployment"),
+				Value: aws.String("www-production"),
 			},
 		},
-		PrivateIpAddress: "172.22.2.150",
+		PrivateIpAddress: aws.String("172.22.2.150"),
 	},
 }
 

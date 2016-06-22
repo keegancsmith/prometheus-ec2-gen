@@ -11,14 +11,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/goamz/goamz/aws"
-	"github.com/goamz/goamz/ec2"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/ec2"
 )
 
 var (
 	dest   string
 	port   int
-	region aws.Region
+	region string
 	sleep  time.Duration
 	tags   Tags
 )
@@ -39,19 +40,19 @@ type Tags []Tag
 func main() {
 	initFlags()
 
-	filter := ec2.NewFilter()
+	filters := []*ec2.Filter{}
 	for _, t := range tags {
-		filter.Add(t.FilterName, t.FilterValue)
+		filters = append(filters, &ec2.Filter{
+			Name:   aws.String(t.FilterName),
+			Values: []*string{aws.String(t.FilterValue)},
+		})
 	}
 
-	auth, err := aws.EnvAuth()
-	if err != nil {
-		log.Fatal(err)
-	}
-	e := ec2.New(auth, region)
+	e := ec2.New(session.New(), &aws.Config{Region: aws.String(region)})
+	params := &ec2.DescribeInstancesInput{Filters: filters}
 
 	for {
-		resp, err := e.DescribeInstances(nil, filter)
+		resp, err := e.DescribeInstances(params)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -95,14 +96,15 @@ func initFlags() {
 
 	flag.Parse()
 	tags = parseTags(tagsRaw)
-	region = aws.Regions[regionRaw]
+	region = regionRaw //TODO
+	//region = aws.Regions[regionRaw]
 }
 
-func groupByTags(instances []ec2.Instance, tags []string) map[string]*TargetGroup {
+func groupByTags(instances []*ec2.Instance, tags []string) map[string]*TargetGroup {
 	targetGroups := make(map[string]*TargetGroup)
 
 	for _, instance := range instances {
-		if instance.State.Code != 16 { // 16 = Running
+		if *instance.State.Code != 16 { // 16 = Running
 			continue
 		}
 
@@ -127,7 +129,7 @@ func groupByTags(instances []ec2.Instance, tags []string) map[string]*TargetGrou
 			targetGroups[key] = targetGroup
 		}
 
-		target := fmt.Sprintf("%s:%d", instance.PrivateIPAddress, port)
+		target := fmt.Sprintf("%s:%d", *instance.PrivateIpAddress, port)
 		targetGroup.Targets = append(targetGroup.Targets, target)
 	}
 
@@ -165,17 +167,17 @@ func atomicWriteFile(filename string, data []byte, tmpSuffix string) error {
 	return nil
 }
 
-func getTag(instance ec2.Instance, key string) string {
+func getTag(instance *ec2.Instance, key string) string {
 	for _, t := range instance.Tags {
-		if t.Key == key {
-			return t.Value
+		if *t.Key == key {
+			return *t.Value
 		}
 	}
 	return ""
 }
 
-func flattenReservations(reservations []ec2.Reservation) []ec2.Instance {
-	instances := make([]ec2.Instance, 0)
+func flattenReservations(reservations []*ec2.Reservation) []*ec2.Instance {
+	instances := make([]*ec2.Instance, 0)
 	for _, r := range reservations {
 		instances = append(instances, r.Instances...)
 	}
@@ -222,11 +224,11 @@ func (tags Tags) Keys() []string {
 	return keys
 }
 
-func allTagKeys(instances []ec2.Instance) []string {
+func allTagKeys(instances []*ec2.Instance) []string {
 	tagSet := map[string]struct{}{}
 	for _, instance := range instances {
 		for _, t := range instance.Tags {
-			tagSet[t.Key] = struct{}{}
+			tagSet[*t.Key] = struct{}{}
 		}
 	}
 	tags := []string{}
